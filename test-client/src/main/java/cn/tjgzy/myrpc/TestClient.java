@@ -15,8 +15,8 @@ public class TestClient {
         HelloService helloService = (HelloService) Proxy.newProxyInstance(HelloService.class.getClassLoader(),
                 new Class<?>[]{HelloService.class}, rpcClientProxy);
 //        HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
-        HelloObject object = new HelloObject(12, "This is a message");
-        String s = helloService.hello(object);
+        HelloObject helloObject = new HelloObject(12, "This is a message");
+        String s = helloService.hello(helloObject);
         System.out.println(s);
     }
 }

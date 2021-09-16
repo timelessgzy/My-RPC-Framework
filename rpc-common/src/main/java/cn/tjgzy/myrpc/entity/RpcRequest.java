@@ -2,6 +2,7 @@ package cn.tjgzy.myrpc.entity;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  */
 @Data
 @Builder
+@ToString
 public class RpcRequest implements Serializable {
 
     /**
