@@ -39,6 +39,11 @@ public class RpcClientProxy implements InvocationHandler {
         return rpcResponse.getData();
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T getProxy(Class<T> clazz) {
+        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, this);
+    }
+
     /**
      * 建立Socket连接，发送rpcRequest
      * @param rpcRequest

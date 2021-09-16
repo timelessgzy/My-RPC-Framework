@@ -1,7 +1,10 @@
 package cn.tjgzy.myrpc;
 
+import cn.tjgzy.myrpc.registry.DefaultServiceRegistry;
+import cn.tjgzy.myrpc.registry.ServiceRegistry;
 import cn.tjgzy.myrpc.server.RpcServer;
 import cn.tjgzy.myrpc.service.HelloServiceImpl;
+import cn.tjgzy.myrpc.service.TestServiceImpl;
 
 /**
  * @author GongZheyi
@@ -9,8 +12,14 @@ import cn.tjgzy.myrpc.service.HelloServiceImpl;
  */
 public class TestServer {
     public static void main(String[] args) {
-        RpcServer rpcServer = new RpcServer();
+        TestService testService =  new TestServiceImpl();
         HelloService helloService = new HelloServiceImpl();
-        rpcServer.register(helloService,8889);
+
+        ServiceRegistry serviceRegistry = new DefaultServiceRegistry();
+        serviceRegistry.register(helloService);
+        serviceRegistry.register(testService);
+
+        RpcServer rpcServer = new RpcServer(serviceRegistry);
+        rpcServer.start(8889);
     }
 }
