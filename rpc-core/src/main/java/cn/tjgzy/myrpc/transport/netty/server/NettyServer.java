@@ -3,6 +3,7 @@ package cn.tjgzy.myrpc.transport.netty.server;
 import cn.tjgzy.myrpc.codec.CommonDecoder;
 import cn.tjgzy.myrpc.codec.CommonEncoder;
 import cn.tjgzy.myrpc.serializer.JsonSerializer;
+import cn.tjgzy.myrpc.serializer.KryoSerializer;
 import cn.tjgzy.myrpc.transport.RpcServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -38,7 +39,7 @@ public class NettyServer implements RpcServer {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new CommonDecoder());
-                            ch.pipeline().addLast(new CommonEncoder(new JsonSerializer()));
+                            ch.pipeline().addLast(new CommonEncoder(new KryoSerializer()));
                             ch.pipeline().addLast(new NettyServerHandler());
                         }
                     });
@@ -51,6 +52,5 @@ public class NettyServer implements RpcServer {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
-
     }
 }

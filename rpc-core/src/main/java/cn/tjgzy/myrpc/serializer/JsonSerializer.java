@@ -54,7 +54,9 @@ public class JsonSerializer implements CommonSerializer {
         for(int i = 0; i < rpcRequest.getParamTypes().length; i ++) {
             Class<?> clazz = rpcRequest.getParamTypes()[i];
             if(!clazz.isAssignableFrom(rpcRequest.getParameters()[i].getClass())) {
+                // 把object数组的元素序列化为bytes
                 byte[] bytes = objectMapper.writeValueAsBytes(rpcRequest.getParameters()[i]);
+                // 根据该元素的实际类型进行辅助反序列化
                 rpcRequest.getParameters()[i] = objectMapper.readValue(bytes, clazz);
             }
         }
