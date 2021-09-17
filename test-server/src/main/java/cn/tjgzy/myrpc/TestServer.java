@@ -2,7 +2,7 @@ package cn.tjgzy.myrpc;
 
 import cn.tjgzy.myrpc.registry.DefaultServiceRegistry;
 import cn.tjgzy.myrpc.registry.ServiceRegistry;
-import cn.tjgzy.myrpc.server.RpcServer;
+import cn.tjgzy.myrpc.transport.socket.server.SocketServer;
 import cn.tjgzy.myrpc.service.HelloServiceImpl;
 import cn.tjgzy.myrpc.service.TestServiceImpl;
 
@@ -19,7 +19,7 @@ public class TestServer {
         serviceRegistry.register(helloService);
         serviceRegistry.register(testService);
 
-        RpcServer rpcServer = new RpcServer(serviceRegistry);
-        rpcServer.start(8889);
+        SocketServer socketServer = new SocketServer(serviceRegistry);
+        socketServer.start(8889);
     }
 }

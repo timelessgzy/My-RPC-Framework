@@ -21,11 +21,11 @@ public class DefaultServiceRegistry implements ServiceRegistry {
      * 注册接口名集合
      * key为接口全类名，value为实现类对象
      */
-    private final Map<String,Object> serviceMap = new ConcurrentHashMap<>();
+    private static final Map<String,Object> serviceMap = new ConcurrentHashMap<>();
     /**
      * 注册过的实现类集合。key为实现类全类名
      */
-    private final Set<String> registeredService = ConcurrentHashMap.newKeySet();
+    private static final Set<String> registeredService = ConcurrentHashMap.newKeySet();
 
 
 
