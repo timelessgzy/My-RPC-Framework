@@ -1,5 +1,6 @@
 package cn.tjgzy.myrpc;
 
+import cn.tjgzy.myrpc.loadbalancer.RoundRobinLoadBalancer;
 import cn.tjgzy.myrpc.transport.netty.client.NettyClient;
 import cn.tjgzy.myrpc.transport.RpcClientProxy;
 
@@ -9,7 +10,7 @@ import cn.tjgzy.myrpc.transport.RpcClientProxy;
  */
 public class NettyTestClient {
     public static void main(String[] args) {
-        NettyClient nettyClient = new NettyClient();
+        NettyClient nettyClient = new NettyClient(new RoundRobinLoadBalancer());
         RpcClientProxy rpcClientProxy = new RpcClientProxy(nettyClient);
         HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
         TestService testService = rpcClientProxy.getProxy(TestService.class);

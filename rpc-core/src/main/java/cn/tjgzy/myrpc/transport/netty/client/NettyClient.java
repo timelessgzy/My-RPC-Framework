@@ -6,6 +6,7 @@ import cn.tjgzy.myrpc.constant.RpcError;
 import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.entity.RpcResponse;
 import cn.tjgzy.myrpc.exception.RpcException;
+import cn.tjgzy.myrpc.loadbalancer.LoadBalancer;
 import cn.tjgzy.myrpc.registry.NacosServiceDiscovery;
 import cn.tjgzy.myrpc.registry.NacosServiceRegistry;
 import cn.tjgzy.myrpc.registry.ServiceDiscovery;
@@ -41,6 +42,10 @@ public class NettyClient implements RpcClient {
 
     public NettyClient() {
         this.serviceDiscovery = new NacosServiceDiscovery();
+    }
+
+    public NettyClient(LoadBalancer loadBalancer) {
+        this.serviceDiscovery = new NacosServiceDiscovery(loadBalancer);
     }
 
     static {

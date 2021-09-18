@@ -2,6 +2,8 @@ package cn.tjgzy.myrpc.registry;
 
 import cn.tjgzy.myrpc.constant.RpcError;
 import cn.tjgzy.myrpc.exception.RpcException;
+import cn.tjgzy.myrpc.loadbalancer.LoadBalancer;
+import cn.tjgzy.myrpc.loadbalancer.RandomLoadBalancer;
 import cn.tjgzy.myrpc.utils.NacosUtils;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
@@ -18,20 +20,25 @@ import java.util.List;
  */
 public class NacosServiceDiscovery implements ServiceDiscovery {
 
+    private final LoadBalancer loadBalancer;
+
     private static final Logger logger = LoggerFactory.getLogger(NacosServiceDiscovery.class);
 
-    private final NamingService namingService;
-
+    // 默认采用随机
     public NacosServiceDiscovery() {
-        this.namingService = NacosUtils.getNacosNamingService();
+        this.loadBalancer = new RandomLoadBalancer();
+    }
+
+    public NacosServiceDiscovery(LoadBalancer loadBalancer) {
+        this.loadBalancer = loadBalancer;
     }
 
     @Override
     public InetSocketAddress lookupService(String serviceName) {
         try {
-            List<Instance> instances = NacosUtils.getAllInstance(namingService, serviceName);
-            // TODO：负载均衡策略
-            Instance instance = instances.get(0);
+            List<Instance> instances = NacosUtils.getAllInstance(serviceName);
+            // 负载均衡策略
+            Instance instance = loadBalancer.select(instances);
             return new InetSocketAddress(instance.getIp(), instance.getPort());
         } catch (NacosException e) {
             logger.error("获取服务时有错误发生:", e);

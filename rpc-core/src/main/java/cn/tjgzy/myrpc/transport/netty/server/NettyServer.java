@@ -2,6 +2,7 @@ package cn.tjgzy.myrpc.transport.netty.server;
 
 import cn.tjgzy.myrpc.codec.CommonDecoder;
 import cn.tjgzy.myrpc.codec.CommonEncoder;
+import cn.tjgzy.myrpc.hook.ShutdownHook;
 import cn.tjgzy.myrpc.provider.ServiceProviderImpl;
 import cn.tjgzy.myrpc.provider.ServiceProvider;
 import cn.tjgzy.myrpc.registry.NacosServiceRegistry;
@@ -62,6 +63,8 @@ public class NettyServer implements RpcServer {
                         }
                     });
             ChannelFuture future = serverBootstrap.bind(host,port).sync();
+            // 添加钩子方法，关闭时向服务中心注销
+            ShutdownHook.getShutdownHook().addClearAllHook();
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
