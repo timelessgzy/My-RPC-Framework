@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author GongZheyi
  * @create 2021-09-16-15:10
  */
-public class DefaultServiceProvider implements ServiceProvider {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultServiceProvider.class);
+public class ServiceProviderImpl implements ServiceProvider {
+    private static final Logger logger = LoggerFactory.getLogger(ServiceProviderImpl.class);
 
     /**
      * 注册接口名集合
@@ -30,20 +30,17 @@ public class DefaultServiceProvider implements ServiceProvider {
 
 
     @Override
-    public <T> void addServiceProvider(T service) {
+    public <T> void addServiceProvider(T service, Class<T> serviceClass) {
+        // 实现类的名称
         String serviceImplName = service.getClass().getCanonicalName();
+        // 接口名称，即服务名称
+        String serviceName = serviceClass.getCanonicalName();
         if (registeredService.contains(serviceImplName)) {
             return;
         }
-        Class<?>[] interfaces = service.getClass().getInterfaces();
-        if (interfaces == null || interfaces.length == 0) {
-            throw new RpcException(RpcError.SERVICE_NOT_IMPLEMENT_ANY_INTERFACE);
-        }
-        for (Class i: interfaces) {
-            serviceMap.put(i.getCanonicalName(),service);
-        }
-        registeredService.add(serviceImplName);
-        logger.info("向接口: {} 注册服务: {}", interfaces, serviceImplName);
+        registeredService.add(serviceName);
+        serviceMap.put(serviceName, service);
+        logger.info("向接口: {} 注册服务: {}", service.getClass().getInterfaces(), serviceName);
     }
 
     @Override

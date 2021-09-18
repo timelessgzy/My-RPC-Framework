@@ -1,7 +1,5 @@
 package cn.tjgzy.myrpc;
 
-import cn.tjgzy.myrpc.provider.DefaultServiceProvider;
-import cn.tjgzy.myrpc.provider.ServiceProvider;
 import cn.tjgzy.myrpc.service.HelloServiceImpl;
 import cn.tjgzy.myrpc.service.TestServiceImpl;
 import cn.tjgzy.myrpc.transport.netty.server.NettyServer;

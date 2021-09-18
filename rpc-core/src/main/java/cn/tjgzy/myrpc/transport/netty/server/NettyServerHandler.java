@@ -2,7 +2,7 @@ package cn.tjgzy.myrpc.transport.netty.server;
 
 import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.entity.RpcResponse;
-import cn.tjgzy.myrpc.provider.DefaultServiceProvider;
+import cn.tjgzy.myrpc.provider.ServiceProviderImpl;
 import cn.tjgzy.myrpc.provider.ServiceProvider;
 import cn.tjgzy.myrpc.transport.RequestHandler;
 import io.netty.channel.*;
@@ -22,7 +22,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
 
     static {
         requestHandler = new RequestHandler();
-        serviceProvider = new DefaultServiceProvider();
+        serviceProvider = new ServiceProviderImpl();
     }
 
     @Override

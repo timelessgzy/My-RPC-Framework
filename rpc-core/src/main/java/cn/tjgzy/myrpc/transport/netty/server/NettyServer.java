@@ -2,11 +2,10 @@ package cn.tjgzy.myrpc.transport.netty.server;
 
 import cn.tjgzy.myrpc.codec.CommonDecoder;
 import cn.tjgzy.myrpc.codec.CommonEncoder;
-import cn.tjgzy.myrpc.provider.DefaultServiceProvider;
+import cn.tjgzy.myrpc.provider.ServiceProviderImpl;
 import cn.tjgzy.myrpc.provider.ServiceProvider;
 import cn.tjgzy.myrpc.registry.NacosServiceRegistry;
 import cn.tjgzy.myrpc.registry.ServiceRegistry;
-import cn.tjgzy.myrpc.serializer.JsonSerializer;
 import cn.tjgzy.myrpc.serializer.KryoSerializer;
 import cn.tjgzy.myrpc.transport.RpcServer;
 import io.netty.bootstrap.ServerBootstrap;
@@ -39,7 +38,7 @@ public class NettyServer implements RpcServer {
         this.host = host;
         this.port = port;
         serviceRegistry = new NacosServiceRegistry();
-        serviceProvider = new DefaultServiceProvider();
+        serviceProvider = new ServiceProviderImpl();
     }
 
     @Override
@@ -74,8 +73,8 @@ public class NettyServer implements RpcServer {
     }
 
     @Override
-    public <T> void publishService(Object service, Class<T> serviceClass) {
-        serviceProvider.addServiceProvider(service);
+    public <T> void publishService(T service, Class<T> serviceClass) {
+        serviceProvider.addServiceProvider(service, serviceClass);
         serviceRegistry.register(serviceClass.getCanonicalName(),new InetSocketAddress(host,port));
         System.out.println("host：" + host);
     }

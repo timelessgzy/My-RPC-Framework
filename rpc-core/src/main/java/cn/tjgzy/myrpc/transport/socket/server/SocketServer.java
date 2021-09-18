@@ -68,7 +68,7 @@ public class SocketServer implements RpcServer {
     }
 
     @Override
-    public <T> void publishService(Object service, Class<T> serviceName) {
+    public <T> void publishService(T service, Class<T> serviceName) {
 
     }
 

@@ -2,9 +2,13 @@ package cn.tjgzy.myrpc.transport.netty.client;
 
 import cn.tjgzy.myrpc.codec.CommonDecoder;
 import cn.tjgzy.myrpc.codec.CommonEncoder;
+import cn.tjgzy.myrpc.constant.RpcError;
 import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.entity.RpcResponse;
+import cn.tjgzy.myrpc.exception.RpcException;
+import cn.tjgzy.myrpc.registry.NacosServiceDiscovery;
 import cn.tjgzy.myrpc.registry.NacosServiceRegistry;
+import cn.tjgzy.myrpc.registry.ServiceDiscovery;
 import cn.tjgzy.myrpc.registry.ServiceRegistry;
 import cn.tjgzy.myrpc.serializer.JsonSerializer;
 import cn.tjgzy.myrpc.serializer.KryoSerializer;
@@ -31,12 +35,12 @@ public class NettyClient implements RpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
 
-    private final ServiceRegistry serviceRegistry;
+    private final ServiceDiscovery serviceDiscovery;
 
     public static final Bootstrap BOOTSTRAP;
 
     public NettyClient() {
-        this.serviceRegistry = new NacosServiceRegistry();
+        this.serviceDiscovery = new NacosServiceDiscovery();
     }
 
     static {
@@ -59,11 +63,11 @@ public class NettyClient implements RpcClient {
     @Override
     public Object sendRequest(RpcRequest rpcRequest) {
         try {
-            // 通过注册中心找到服务
-            InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
+            // 通过注册中心找到服务，返回服务地址
+            InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName());
             String hostIp = inetSocketAddress.getAddress().getHostAddress();
             int port = inetSocketAddress.getPort();
-            // TODO:这里的IP是不是有问题？
+
             ChannelFuture future = BOOTSTRAP.connect(hostIp, port).sync();
             logger.info("客户端连接到服务器 {}:{}", hostIp, port);
             Channel channel = future.channel();
@@ -81,7 +85,7 @@ public class NettyClient implements RpcClient {
                 return rpcResponse.getData();
             }
         } catch (InterruptedException e) {
-            logger.error("发送消息 / 连接服务器时有错误发生: ", e);
+            logger.error("发送消息时有错误发生: ", e);
         }
         return null;
     }
