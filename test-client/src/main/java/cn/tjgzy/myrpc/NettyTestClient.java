@@ -9,7 +9,7 @@ import cn.tjgzy.myrpc.transport.RpcClientProxy;
  */
 public class NettyTestClient {
     public static void main(String[] args) {
-        NettyClient nettyClient = new NettyClient("127.0.0.1", 9999);
+        NettyClient nettyClient = new NettyClient();
         RpcClientProxy rpcClientProxy = new RpcClientProxy(nettyClient);
         HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
         TestService testService = rpcClientProxy.getProxy(TestService.class);

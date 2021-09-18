@@ -2,7 +2,7 @@ package cn.tjgzy.myrpc.transport.socket.server;
 
 import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.entity.RpcResponse;
-import cn.tjgzy.myrpc.registry.ServiceRegistry;
+import cn.tjgzy.myrpc.provider.ServiceProvider;
 import cn.tjgzy.myrpc.transport.RequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +21,11 @@ public class RequestHandlerThread implements Runnable {
 
     private Socket socket;
     private RequestHandler requestHandler;
-    private ServiceRegistry serviceRegistry;
+    private ServiceProvider serviceProvider;
 
-    public RequestHandlerThread(Socket socket, RequestHandler requestHandler, ServiceRegistry serviceRegistry) {
+    public RequestHandlerThread(Socket socket, RequestHandler requestHandler, ServiceProvider serviceProvider) {
         this.requestHandler = requestHandler;
-        this.serviceRegistry = serviceRegistry;
+        this.serviceProvider = serviceProvider;
         this.socket = socket;
     }
 
@@ -38,7 +38,7 @@ public class RequestHandlerThread implements Runnable {
             RpcRequest rpcRequest = (RpcRequest) objectInputStream.readObject();
             // 根据RpcRequest的接口名称获取对象
             String interfaceName = rpcRequest.getInterfaceName();
-            Object service = serviceRegistry.getService(interfaceName);
+            Object service = serviceProvider.getService(interfaceName);
             // 交给requestHandler处理，返回值为result
             Object result = requestHandler.handle(rpcRequest, service);
             // 构造rpcResponse并返回

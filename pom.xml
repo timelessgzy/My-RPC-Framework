@@ -25,6 +25,7 @@
         <slf4j.version>1.7.25</slf4j.version>
         <!-- protostuff -->
         <protostuff.version>1.7.2</protostuff.version>
+        <nacos.version>1.3.0</nacos.version>
     </properties>
 
     <modules>

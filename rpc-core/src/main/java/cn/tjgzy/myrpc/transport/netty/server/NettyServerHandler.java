@@ -2,8 +2,8 @@ package cn.tjgzy.myrpc.transport.netty.server;
 
 import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.entity.RpcResponse;
-import cn.tjgzy.myrpc.registry.DefaultServiceRegistry;
-import cn.tjgzy.myrpc.registry.ServiceRegistry;
+import cn.tjgzy.myrpc.provider.DefaultServiceProvider;
+import cn.tjgzy.myrpc.provider.ServiceProvider;
 import cn.tjgzy.myrpc.transport.RequestHandler;
 import io.netty.channel.*;
 import io.netty.util.ReferenceCountUtil;
@@ -18,18 +18,18 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
 
     private static final Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
     private static RequestHandler requestHandler;
-    private static ServiceRegistry serviceRegistry;
+    private static ServiceProvider serviceProvider;
 
     static {
         requestHandler = new RequestHandler();
-        serviceRegistry = new DefaultServiceRegistry();
+        serviceProvider = new DefaultServiceProvider();
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcRequest msg) throws Exception {
 
         String interfaceName = msg.getInterfaceName();
-        Object service = serviceRegistry.getService(interfaceName);
+        Object service = serviceProvider.getService(interfaceName);
         Object result = requestHandler.handle(msg, service);
         // 构造Response报文
         RpcResponse<Object> rpcResponse = RpcResponse.success(result);

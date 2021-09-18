@@ -4,6 +4,8 @@ import cn.tjgzy.myrpc.codec.CommonDecoder;
 import cn.tjgzy.myrpc.codec.CommonEncoder;
 import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.entity.RpcResponse;
+import cn.tjgzy.myrpc.registry.NacosServiceRegistry;
+import cn.tjgzy.myrpc.registry.ServiceRegistry;
 import cn.tjgzy.myrpc.serializer.JsonSerializer;
 import cn.tjgzy.myrpc.serializer.KryoSerializer;
 import cn.tjgzy.myrpc.transport.RpcClient;
@@ -19,6 +21,8 @@ import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
+
 /**
  * @author GongZheyi
  * @create 2021-09-17-9:47
@@ -27,14 +31,12 @@ public class NettyClient implements RpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
 
-    private String host;
-    private int port;
+    private final ServiceRegistry serviceRegistry;
 
     public static final Bootstrap BOOTSTRAP;
 
-    public NettyClient(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public NettyClient() {
+        this.serviceRegistry = new NacosServiceRegistry();
     }
 
     static {
@@ -57,10 +59,11 @@ public class NettyClient implements RpcClient {
     @Override
     public Object sendRequest(RpcRequest rpcRequest) {
         try {
-            ChannelFuture future = BOOTSTRAP.connect(host, port).sync();
-            logger.info("客户端连接到服务器 {}:{}", host, port);
+            InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
+            ChannelFuture future = BOOTSTRAP.connect(inetSocketAddress.getHostName(), inetSocketAddress.getPort()).sync();
+            logger.info("客户端连接到服务器 {}:{}", inetSocketAddress.getHostName(), inetSocketAddress.getPort());
             Channel channel = future.channel();
-            if (channel != null) {
+            if (channel.isActive()) {
                 channel.writeAndFlush(rpcRequest).addListener(future1 -> {
                     if (future1.isSuccess()) {
                         logger.info(String.format("客户端发送消息: %s", rpcRequest.toString()));
@@ -74,7 +77,7 @@ public class NettyClient implements RpcClient {
                 return rpcResponse.getData();
             }
         } catch (InterruptedException e) {
-            logger.error("发送消息时有错误发生: ", e);
+            logger.error("发送消息 / 连接服务器时有错误发生: ", e);
         }
         return null;
     }

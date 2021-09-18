@@ -1,6 +1,6 @@
 package cn.tjgzy.myrpc.transport.socket.server;
 
-import cn.tjgzy.myrpc.registry.ServiceRegistry;
+import cn.tjgzy.myrpc.provider.ServiceProvider;
 import cn.tjgzy.myrpc.transport.RequestHandler;
 import cn.tjgzy.myrpc.transport.RpcServer;
 import org.slf4j.Logger;
@@ -24,15 +24,19 @@ public class SocketServer implements RpcServer {
     private static final int BLOCKING_QUEUE_CAPACITY = 100;
 
     private final ExecutorService threadPool;
-    private final ServiceRegistry serviceRegistry;
+    private final ServiceProvider serviceProvider;
     private RequestHandler requestHandler = new RequestHandler();
 
+    private static String host;
+    private static int port;
 
-    public SocketServer(ServiceRegistry serviceRegistry) {
+
+
+    public SocketServer(ServiceProvider serviceProvider) {
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
         threadPool = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_TIME,
                 TimeUnit.SECONDS, new ArrayBlockingQueue<>(BLOCKING_QUEUE_CAPACITY), threadFactory);
-        this.serviceRegistry = serviceRegistry;
+        this.serviceProvider = serviceProvider;
     }
 
 
@@ -50,17 +54,22 @@ public class SocketServer implements RpcServer {
 //    }
 
     @Override
-    public void start(int port) {
+    public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             logger.info("服务器正在启动...");
             Socket socket;
             while((socket = serverSocket.accept()) != null) {
                 logger.info("客户端已连接！Ip为：" + socket.getInetAddress() + "端口为：" + socket.getPort());
-                threadPool.execute(new RequestHandlerThread(socket,requestHandler, serviceRegistry));
+                threadPool.execute(new RequestHandlerThread(socket,requestHandler, serviceProvider));
             }
         } catch (IOException e) {
             logger.error("连接时有错误发生：", e);
         }
+    }
+
+    @Override
+    public <T> void publishService(Object service, Class<T> serviceName) {
+
     }
 
 }

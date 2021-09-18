@@ -6,6 +6,13 @@ package cn.tjgzy.myrpc.transport;
  */
 public interface RpcServer {
 
-    void start(int port);
+    void start();
 
+    /**
+     * 向注册中心注册服务
+     * @param service
+     * @param serviceName
+     * @param <T>
+     */
+    <T> void publishService(Object service, Class<T> serviceName);
 }

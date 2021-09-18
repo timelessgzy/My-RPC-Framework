@@ -1,4 +1,4 @@
-package cn.tjgzy.myrpc.registry;
+package cn.tjgzy.myrpc.provider;
 
 
 import cn.tjgzy.myrpc.constant.RpcError;
@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author GongZheyi
  * @create 2021-09-16-15:10
  */
-public class DefaultServiceRegistry implements ServiceRegistry {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultServiceRegistry.class);
+public class DefaultServiceProvider implements ServiceProvider {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultServiceProvider.class);
 
     /**
      * 注册接口名集合
@@ -30,7 +30,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
 
     @Override
-    public <T> void register(T service) {
+    public <T> void addServiceProvider(T service) {
         String serviceImplName = service.getClass().getCanonicalName();
         if (registeredService.contains(serviceImplName)) {
             return;
