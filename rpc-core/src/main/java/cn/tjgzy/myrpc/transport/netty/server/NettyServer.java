@@ -77,5 +77,6 @@ public class NettyServer implements RpcServer {
     public <T> void publishService(Object service, Class<T> serviceClass) {
         serviceProvider.addServiceProvider(service);
         serviceRegistry.register(serviceClass.getCanonicalName(),new InetSocketAddress(host,port));
+        System.out.println("host：" + host);
     }
 }

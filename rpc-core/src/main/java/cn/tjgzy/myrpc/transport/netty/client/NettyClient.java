@@ -59,9 +59,13 @@ public class NettyClient implements RpcClient {
     @Override
     public Object sendRequest(RpcRequest rpcRequest) {
         try {
+            // 通过注册中心找到服务
             InetSocketAddress inetSocketAddress = serviceRegistry.lookupService(rpcRequest.getInterfaceName());
-            ChannelFuture future = BOOTSTRAP.connect(inetSocketAddress.getHostName(), inetSocketAddress.getPort()).sync();
-            logger.info("客户端连接到服务器 {}:{}", inetSocketAddress.getHostName(), inetSocketAddress.getPort());
+            String hostIp = inetSocketAddress.getAddress().getHostAddress();
+            int port = inetSocketAddress.getPort();
+            // TODO:这里的IP是不是有问题？
+            ChannelFuture future = BOOTSTRAP.connect(hostIp, port).sync();
+            logger.info("客户端连接到服务器 {}:{}", hostIp, port);
             Channel channel = future.channel();
             if (channel.isActive()) {
                 channel.writeAndFlush(rpcRequest).addListener(future1 -> {

@@ -36,12 +36,12 @@ public class NacosServiceRegistry implements ServiceRegistry {
 
     @Override
     public void register(String serviceName, InetSocketAddress inetSocketAddress) {
-        String host = inetSocketAddress.getHostName();
-//        String hostAddress = inetSocketAddress.getAddress().getHostAddress();
+        // TODO:新建一个Instance注入信息后注册到Nacos
+//        String hostName = inetSocketAddress.getHostName();
+        String hostIp = inetSocketAddress.getAddress().getHostAddress();
         int port = inetSocketAddress.getPort();
-        logger.info("注册的host：" + host);
         try {
-            namingService.registerInstance(serviceName, host, port);
+            namingService.registerInstance(serviceName, hostIp, port);
         } catch (NacosException e) {
             logger.error("注册实例失败");
             throw new RpcException(RpcError.REGISTER_SERVICE_FAILED);

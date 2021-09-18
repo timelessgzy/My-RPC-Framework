@@ -14,9 +14,6 @@ public class NettyTestServer {
     public static void main(String[] args) {
         HelloService helloService = new HelloServiceImpl();
         TestService testService = new TestServiceImpl();
-        ServiceProvider serviceProvider = new DefaultServiceProvider();
-//        serviceProvider.addServiceProvider(helloService);
-//        serviceProvider.addServiceProvider(testService);
         NettyServer nettyServer = new NettyServer("127.0.0.1",9999);
         nettyServer.publishService(helloService,HelloService.class);
         nettyServer.publishService(testService,TestService.class);
