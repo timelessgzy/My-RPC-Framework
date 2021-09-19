@@ -16,7 +16,6 @@ public class RoundRobinLoadBalancer implements LoadBalancer {
 
     @Override
     public Instance select(List<Instance> instances) {
-        System.out.println(22222222);
         if (instances == null || instances.size() == 0) {
             throw new RpcException(RpcError.SERVICE_NOT_FOUND);
         }

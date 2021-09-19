@@ -16,8 +16,10 @@ public class NettyTestClient {
         TestService testService = rpcClientProxy.getProxy(TestService.class);
         HelloObject object = new HelloObject(11, "This is a netty message");
         String res = helloService.hello(object);
-        int number = testService.getNumber(12);
         System.out.println(res);
+
+        int number = testService.getNumber(12);
+
         System.out.println(number);
     }
 }

@@ -14,5 +14,5 @@ public interface RpcServer {
      * @param serviceName
      * @param <T>
      */
-    <T> void publishService(T service, Class<T> serviceName);
+    <T> void publishService(T service, String serviceName);
 }

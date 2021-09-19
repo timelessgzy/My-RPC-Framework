@@ -1,6 +1,7 @@
 package cn.tjgzy.myrpc.transport.socket.server;
 
 import cn.tjgzy.myrpc.provider.ServiceProvider;
+import cn.tjgzy.myrpc.transport.AbstractRpcServer;
 import cn.tjgzy.myrpc.transport.RequestHandler;
 import cn.tjgzy.myrpc.transport.RpcServer;
 import org.slf4j.Logger;
@@ -15,7 +16,7 @@ import java.util.concurrent.*;
  * @author GongZheyi
  * @create 2021-09-16-12:05
  */
-public class SocketServer implements RpcServer {
+public class SocketServer extends AbstractRpcServer {
     private static final Logger logger = LoggerFactory.getLogger(SocketServer.class);
 
     private static final int CORE_POOL_SIZE = 5;
@@ -67,9 +68,5 @@ public class SocketServer implements RpcServer {
         }
     }
 
-    @Override
-    public <T> void publishService(T service, Class<T> serviceName) {
-
-    }
 
 }

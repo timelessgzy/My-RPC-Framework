@@ -16,8 +16,8 @@ public class TestServer {
         HelloService helloService = new HelloServiceImpl();
 
         ServiceProvider serviceProvider = new ServiceProviderImpl();
-        serviceProvider.addServiceProvider(helloService,HelloService.class);
-        serviceProvider.addServiceProvider(testService,TestService.class);
+//        serviceProvider.addServiceProvider(helloService,HelloService.class);
+//        serviceProvider.addServiceProvider(testService,TestService.class);
 
         SocketServer socketServer = new SocketServer(serviceProvider);
 //        socketServer.start(8889);

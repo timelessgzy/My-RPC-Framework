@@ -31,6 +31,7 @@ public class RequestHandler {
     private Object invokeTargetMethod(RpcRequest rpcRequest, Object service) throws IllegalAccessException, InvocationTargetException {
         Method method;
         try {
+            System.out.println(service);
             method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
         } catch (NoSuchMethodException e) {
             return RpcResponse.fail(ResponseCode.METHOD_NOT_FOUND);

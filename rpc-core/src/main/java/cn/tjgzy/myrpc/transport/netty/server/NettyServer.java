@@ -8,6 +8,7 @@ import cn.tjgzy.myrpc.provider.ServiceProvider;
 import cn.tjgzy.myrpc.registry.NacosServiceRegistry;
 import cn.tjgzy.myrpc.registry.ServiceRegistry;
 import cn.tjgzy.myrpc.serializer.KryoSerializer;
+import cn.tjgzy.myrpc.transport.AbstractRpcServer;
 import cn.tjgzy.myrpc.transport.RpcServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -25,21 +26,14 @@ import java.net.InetSocketAddress;
  * @author GongZheyi
  * @create 2021-09-17-9:37
  */
-public class NettyServer implements RpcServer {
-
-    private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
-
-    private static ServiceRegistry serviceRegistry;
-    private static ServiceProvider serviceProvider;
-
-    private static String host;
-    private static int port;
+public class NettyServer extends AbstractRpcServer {
 
     public NettyServer(String host, int port) {
         this.host = host;
         this.port = port;
         serviceRegistry = new NacosServiceRegistry();
         serviceProvider = new ServiceProviderImpl();
+        scanServices();
     }
 
     @Override
@@ -75,10 +69,4 @@ public class NettyServer implements RpcServer {
         }
     }
 
-    @Override
-    public <T> void publishService(T service, Class<T> serviceClass) {
-        serviceProvider.addServiceProvider(service, serviceClass);
-        serviceRegistry.register(serviceClass.getCanonicalName(),new InetSocketAddress(host,port));
-        System.out.println("host：" + host);
-    }
 }

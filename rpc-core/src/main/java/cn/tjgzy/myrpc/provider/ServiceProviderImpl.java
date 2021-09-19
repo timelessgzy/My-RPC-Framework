@@ -30,12 +30,8 @@ public class ServiceProviderImpl implements ServiceProvider {
 
 
     @Override
-    public <T> void addServiceProvider(T service, Class<T> serviceClass) {
-        // 实现类的名称
-        String serviceImplName = service.getClass().getCanonicalName();
-        // 接口名称，即服务名称
-        String serviceName = serviceClass.getCanonicalName();
-        if (registeredService.contains(serviceImplName)) {
+    public <T> void addServiceProvider(T service, String serviceName) {
+        if (registeredService.contains(serviceName)) {
             return;
         }
         registeredService.add(serviceName);
