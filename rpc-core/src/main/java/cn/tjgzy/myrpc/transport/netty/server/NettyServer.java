@@ -10,6 +10,7 @@ import cn.tjgzy.myrpc.registry.ServiceRegistry;
 import cn.tjgzy.myrpc.serializer.KryoSerializer;
 import cn.tjgzy.myrpc.transport.AbstractRpcServer;
 import cn.tjgzy.myrpc.transport.RpcServer;
+import cn.tjgzy.myrpc.utils.concurrent.threadpool.ThreadPoolFactoryUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -17,6 +18,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +42,8 @@ public class NettyServer extends AbstractRpcServer {
     public void start() {
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+        DefaultEventExecutorGroup serviceHandlerGroup = new DefaultEventExecutorGroup(Runtime.getRuntime().availableProcessors() * 2,
+                ThreadPoolFactoryUtils.createThreadFactory("service-handler-group"));
 
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -53,7 +57,7 @@ public class NettyServer extends AbstractRpcServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new CommonDecoder());
                             ch.pipeline().addLast(new CommonEncoder(new KryoSerializer()));
-                            ch.pipeline().addLast(new NettyServerHandler());
+                            ch.pipeline().addLast(serviceHandlerGroup, new NettyServerHandler());
                         }
                     });
             ChannelFuture future = serverBootstrap.bind(host,port).sync();
@@ -66,6 +70,7 @@ public class NettyServer extends AbstractRpcServer {
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
+            serviceHandlerGroup.shutdownGracefully();
         }
     }
 

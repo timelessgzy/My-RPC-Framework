@@ -1,6 +1,7 @@
 package cn.tjgzy.myrpc.hook;
 
 import cn.tjgzy.myrpc.utils.NacosUtils;
+import cn.tjgzy.myrpc.utils.concurrent.threadpool.ThreadPoolFactoryUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +25,10 @@ public class ShutdownHook {
         logger.info("关闭后将注销所有服务");
         Runtime.getRuntime().addShutdownHook(new Thread( () -> {
             logger.info("触发钩子，开始进行注销");
+            // 向注册中心进行注销
             NacosUtils.deregister();
-//            threadPool.shutdown();
+            // 关闭线程池
+            ThreadPoolFactoryUtils.shutdownAllThreadPool();
         }));
     }
 
