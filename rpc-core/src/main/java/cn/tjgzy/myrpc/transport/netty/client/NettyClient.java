@@ -2,31 +2,25 @@ package cn.tjgzy.myrpc.transport.netty.client;
 
 import cn.tjgzy.myrpc.codec.CommonDecoder;
 import cn.tjgzy.myrpc.codec.CommonEncoder;
-import cn.tjgzy.myrpc.constant.RpcError;
 import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.entity.RpcResponse;
-import cn.tjgzy.myrpc.exception.RpcException;
-import cn.tjgzy.myrpc.loadbalancer.LoadBalancer;
+import cn.tjgzy.myrpc.factory.SingletonFactory;
+import cn.tjgzy.myrpc.loadbalance.LoadBalancer;
+import cn.tjgzy.myrpc.loadbalance.RandomLoadBalancer;
 import cn.tjgzy.myrpc.registry.NacosServiceDiscovery;
-import cn.tjgzy.myrpc.registry.NacosServiceRegistry;
 import cn.tjgzy.myrpc.registry.ServiceDiscovery;
-import cn.tjgzy.myrpc.registry.ServiceRegistry;
-import cn.tjgzy.myrpc.serializer.JsonSerializer;
 import cn.tjgzy.myrpc.serializer.KryoSerializer;
 import cn.tjgzy.myrpc.transport.RpcClient;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author GongZheyi
@@ -40,12 +34,15 @@ public class NettyClient implements RpcClient {
 
     public static final Bootstrap BOOTSTRAP;
 
+    private final UnprocessedRequests unprocessedRequests;
+
     public NettyClient() {
-        this.serviceDiscovery = new NacosServiceDiscovery();
+        this(new RandomLoadBalancer());
     }
 
     public NettyClient(LoadBalancer loadBalancer) {
         this.serviceDiscovery = new NacosServiceDiscovery(loadBalancer);
+        this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
     }
 
     static {
@@ -66,7 +63,10 @@ public class NettyClient implements RpcClient {
 
 
     @Override
-    public Object sendRequest(RpcRequest rpcRequest) {
+    public CompletableFuture<RpcResponse> sendRequest(RpcRequest rpcRequest) {
+
+        CompletableFuture<RpcResponse> resultFuture = new CompletableFuture<>();
+
         try {
             // 通过注册中心找到服务，返回服务地址
             InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName());
@@ -76,22 +76,29 @@ public class NettyClient implements RpcClient {
             ChannelFuture future = BOOTSTRAP.connect(hostIp, port).sync();
             logger.info("客户端连接到服务器 {}:{}", hostIp, port);
             Channel channel = future.channel();
+
             if (channel.isActive()) {
-                channel.writeAndFlush(rpcRequest).addListener(future1 -> {
+                // 将rpcRequest的ID和结果凭证resultFuture保存起来
+                unprocessedRequests.put(rpcRequest.getRequestId(), resultFuture);
+                channel.writeAndFlush(rpcRequest).addListener((ChannelFutureListener) future1 -> {
                     if (future1.isSuccess()) {
                         logger.info(String.format("客户端发送消息: %s", rpcRequest.toString()));
                     } else {
+                        future1.channel().close();
+                        resultFuture.completeExceptionally(future1.cause());
                         logger.error("发送消息时有错误发生: ", future1.cause());
                     }
                 });
-                channel.closeFuture().sync();
-                AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
-                RpcResponse rpcResponse = channel.attr(key).get();
-                return rpcResponse.getData();
+//                channel.closeFuture().sync();
+//                AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
+//                RpcResponse rpcResponse = channel.attr(key).get();
+//                return rpcResponse.getData();
             }
         } catch (InterruptedException e) {
-            logger.error("发送消息时有错误发生: ", e);
+            unprocessedRequests.remove(rpcRequest.getRequestId());
+            logger.error("发送消息时有错误发生: ",e.getMessage(), e);
+            Thread.currentThread().interrupt();
         }
-        return null;
+        return resultFuture;
     }
 }

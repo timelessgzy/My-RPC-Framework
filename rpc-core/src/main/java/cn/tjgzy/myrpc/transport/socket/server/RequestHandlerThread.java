@@ -42,7 +42,8 @@ public class RequestHandlerThread implements Runnable {
             // 交给requestHandler处理，返回值为result
             Object result = requestHandler.handle(rpcRequest, service);
             // 构造rpcResponse并返回
-            objectOutputStream.writeObject(RpcResponse.success(result));
+            // TODO:requestId
+            objectOutputStream.writeObject(RpcResponse.success(result,""));
             objectOutputStream.flush();
         } catch (IOException | ClassNotFoundException e) {
             logger.error("调用或发送时有错误发生：", e);

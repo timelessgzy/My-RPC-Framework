@@ -2,11 +2,10 @@ package cn.tjgzy.myrpc.registry;
 
 import cn.tjgzy.myrpc.constant.RpcError;
 import cn.tjgzy.myrpc.exception.RpcException;
-import cn.tjgzy.myrpc.loadbalancer.LoadBalancer;
-import cn.tjgzy.myrpc.loadbalancer.RandomLoadBalancer;
+import cn.tjgzy.myrpc.loadbalance.LoadBalancer;
+import cn.tjgzy.myrpc.loadbalance.RandomLoadBalancer;
 import cn.tjgzy.myrpc.utils.NacosUtils;
 import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

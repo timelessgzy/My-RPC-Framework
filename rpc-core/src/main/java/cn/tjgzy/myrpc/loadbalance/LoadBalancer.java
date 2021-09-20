@@ -1,4 +1,4 @@
-package cn.tjgzy.myrpc.loadbalancer;
+package cn.tjgzy.myrpc.loadbalance;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
 

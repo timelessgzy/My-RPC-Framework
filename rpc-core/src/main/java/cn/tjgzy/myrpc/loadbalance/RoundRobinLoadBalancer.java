@@ -1,4 +1,4 @@
-package cn.tjgzy.myrpc.loadbalancer;
+package cn.tjgzy.myrpc.loadbalance;
 
 import cn.tjgzy.myrpc.constant.RpcError;
 import cn.tjgzy.myrpc.exception.RpcException;

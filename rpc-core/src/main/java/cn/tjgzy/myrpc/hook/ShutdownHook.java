@@ -1,11 +1,9 @@
 package cn.tjgzy.myrpc.hook;
 
 import cn.tjgzy.myrpc.utils.NacosUtils;
-import cn.tjgzy.myrpc.utils.concurrent.threadpool.ThreadPoolFactoryUtils;
+import cn.tjgzy.myrpc.utils.ThreadPoolFactoryUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.ExecutorService;
 
 /**
  * @author GongZheyi
