@@ -1,6 +1,7 @@
 package cn.tjgzy.myrpc.loadbalance;
 
 import cn.tjgzy.myrpc.constant.RpcError;
+import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.exception.RpcException;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 
@@ -15,7 +16,7 @@ public class RoundRobinLoadBalancer implements LoadBalancer {
     private int index = 0;
 
     @Override
-    public Instance select(List<Instance> instances) {
+    public Instance select(List<Instance> instances, RpcRequest rpcRequest) {
         if (instances == null || instances.size() == 0) {
             throw new RpcException(RpcError.SERVICE_NOT_FOUND);
         }

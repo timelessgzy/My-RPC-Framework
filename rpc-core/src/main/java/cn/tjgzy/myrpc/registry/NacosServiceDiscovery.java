@@ -1,6 +1,7 @@
 package cn.tjgzy.myrpc.registry;
 
 import cn.tjgzy.myrpc.constant.RpcError;
+import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.exception.RpcException;
 import cn.tjgzy.myrpc.loadbalance.LoadBalancer;
 import cn.tjgzy.myrpc.loadbalance.RandomLoadBalancer;
@@ -33,11 +34,12 @@ public class NacosServiceDiscovery implements ServiceDiscovery {
     }
 
     @Override
-    public InetSocketAddress lookupService(String serviceName) {
+    public InetSocketAddress lookupService(RpcRequest rpcRequest) {
+        String serviceName = rpcRequest.getInterfaceName();
         try {
             List<Instance> instances = NacosUtils.getAllInstance(serviceName);
             // 负载均衡策略
-            Instance instance = loadBalancer.select(instances);
+            Instance instance = loadBalancer.select(instances, rpcRequest);
             return new InetSocketAddress(instance.getIp(), instance.getPort());
         } catch (NacosException e) {
             logger.error("获取服务时有错误发生:", e);

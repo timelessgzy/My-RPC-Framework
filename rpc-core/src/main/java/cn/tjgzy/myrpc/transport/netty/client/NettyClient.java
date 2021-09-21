@@ -69,13 +69,15 @@ public class NettyClient implements RpcClient {
 
         try {
             // 通过注册中心找到服务，返回服务地址
-            InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName());
+            InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest);
             String hostIp = inetSocketAddress.getAddress().getHostAddress();
             int port = inetSocketAddress.getPort();
 
             ChannelFuture future = BOOTSTRAP.connect(hostIp, port).sync();
-            logger.info("客户端连接到服务器 {}:{}", hostIp, port);
+
             Channel channel = future.channel();
+
+            logger.info("客户端连接到服务器 {}:{},channel是{}", hostIp, port,channel);
 
             if (channel.isActive()) {
                 // 将rpcRequest的ID和结果凭证resultFuture保存起来

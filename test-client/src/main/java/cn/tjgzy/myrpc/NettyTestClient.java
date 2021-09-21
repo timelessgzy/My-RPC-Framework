@@ -1,5 +1,7 @@
 package cn.tjgzy.myrpc;
 
+import cn.tjgzy.myrpc.loadbalance.ConsistentHashLoadBalancer;
+import cn.tjgzy.myrpc.loadbalance.RandomLoadBalancer;
 import cn.tjgzy.myrpc.loadbalance.RoundRobinLoadBalancer;
 import cn.tjgzy.myrpc.transport.netty.client.NettyClient;
 import cn.tjgzy.myrpc.transport.RpcClientProxy;
