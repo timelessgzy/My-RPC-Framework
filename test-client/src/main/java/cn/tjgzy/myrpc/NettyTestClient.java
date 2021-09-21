@@ -13,7 +13,7 @@ import cn.tjgzy.myrpc.transport.RpcClientProxy;
 public class NettyTestClient {
     public static void main(String[] args) {
         // 新建一个Netty客户端
-        NettyClient nettyClient = new NettyClient(new RoundRobinLoadBalancer());
+        NettyClient nettyClient = new NettyClient(new ConsistentHashLoadBalancer());
         // 新建一个代理类处理器，代理实现类的逻辑在这里
         RpcClientProxy rpcClientProxy = new RpcClientProxy(nettyClient);
 

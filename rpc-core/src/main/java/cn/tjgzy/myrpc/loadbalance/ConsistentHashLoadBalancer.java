@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
  * @author GongZheyi
  * @create 2021-09-21-8:39
  */
-public class ConsistentHashLoadBalancer implements LoadBalancer {
+public class ConsistentHashLoadBalancer extends AbstractLoadBalance {
 
     // key为需要调用的服务名称，value为选择器
     private final ConcurrentHashMap<String, ConsistentHashSelector> selectors = new ConcurrentHashMap<>();
 
     @Override
-    public Instance select(List<Instance> instances, RpcRequest rpcRequest) {
+    protected Instance doSelect(List<Instance> instances, RpcRequest rpcRequest) {
         // map保存Instance的地址与Instance实例
         Map<String,Instance> map = new HashMap();
 

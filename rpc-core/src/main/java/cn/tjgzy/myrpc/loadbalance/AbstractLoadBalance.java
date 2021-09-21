@@ -9,20 +9,20 @@ import java.util.List;
 
 /**
  * @author GongZheyi
- * @create 2021-09-18-13:18
+ * @create 2021-09-21-14:41
  */
-public class RoundRobinLoadBalancer extends AbstractLoadBalance {
-
-    private int index = 0;
-
+public abstract class AbstractLoadBalance implements LoadBalancer {
     @Override
-    protected Instance doSelect(List<Instance> instances, RpcRequest rpcRequest) {
+    public Instance select(List<Instance> instances, RpcRequest rpcRequest) {
         if (instances == null || instances.size() == 0) {
             throw new RpcException(RpcError.SERVICE_NOT_FOUND);
         }
-        if (index >= instances.size()) {
-            index %= instances.size();
+        if (instances.size() == 1) {
+            return instances.get(0);
         }
-        return instances.get(index++);
+        return doSelect(instances, rpcRequest);
     }
+
+    protected abstract Instance doSelect(List<Instance> instances, RpcRequest rpcRequest);
+
 }
