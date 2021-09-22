@@ -20,7 +20,7 @@ public class ShutdownHook {
     }
 
     public void addClearAllHook() {
-        logger.info("关闭后将注销所有服务");
+        logger.info("添加钩子函数，关闭后将注销所有服务");
         Runtime.getRuntime().addShutdownHook(new Thread( () -> {
             logger.info("触发钩子，开始进行注销");
             // 向注册中心进行注销

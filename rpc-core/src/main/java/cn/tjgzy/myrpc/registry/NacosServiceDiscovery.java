@@ -4,7 +4,7 @@ import cn.tjgzy.myrpc.constant.RpcError;
 import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.exception.RpcException;
 import cn.tjgzy.myrpc.loadbalance.LoadBalancer;
-import cn.tjgzy.myrpc.loadbalance.RandomLoadBalancer;
+import cn.tjgzy.myrpc.loadbalance.impl.RandomLoadBalancer;
 import cn.tjgzy.myrpc.utils.NacosUtils;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.pojo.Instance;

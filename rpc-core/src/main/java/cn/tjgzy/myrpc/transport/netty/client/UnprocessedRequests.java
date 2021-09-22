@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
+/** 保存待处理的请求ID
  * @author GongZheyi
  * @create 2021-09-20-14:16
  */
@@ -30,6 +30,5 @@ public class UnprocessedRequests {
             throw new IllegalStateException();
         }
     }
-
 
 }

@@ -15,7 +15,10 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author GongZheyi
@@ -48,6 +51,7 @@ public class NettyServer extends AbstractRpcServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast(new IdleStateHandler(5, 0, 0, TimeUnit.SECONDS));
                             ch.pipeline().addLast(new CommonDecoder());
                             ch.pipeline().addLast(new CommonEncoder(new KryoSerializer()));
                             ch.pipeline().addLast(serviceHandlerGroup, new NettyServerHandler());

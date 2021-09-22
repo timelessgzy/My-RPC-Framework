@@ -9,6 +9,7 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.List;
@@ -41,9 +42,14 @@ public class NacosUtils {
     public static void registerService(String serviceName, InetSocketAddress inetSocketAddress) throws NacosException {
         String hostIp = inetSocketAddress.getAddress().getHostAddress();
         int port = inetSocketAddress.getPort();
-        namingService.registerInstance(serviceName, hostIp, port);
-        NacosUtils.address = inetSocketAddress;
-        serviceNames.add(serviceName);
+        try {
+            namingService.registerInstance(serviceName, hostIp, port);
+            NacosUtils.address = inetSocketAddress;
+            serviceNames.add(serviceName);
+        } catch (Exception e) {
+            throw new RpcException(RpcError.FAILED_TO_CONNECT_TO_SERVICE_REGISTRY);
+        }
+
     }
 
     /**

@@ -1,8 +1,6 @@
 package cn.tjgzy.myrpc;
 
-import cn.tjgzy.myrpc.loadbalance.ConsistentHashLoadBalancer;
-import cn.tjgzy.myrpc.loadbalance.RandomLoadBalancer;
-import cn.tjgzy.myrpc.loadbalance.RoundRobinLoadBalancer;
+import cn.tjgzy.myrpc.loadbalance.impl.ConsistentHashLoadBalancer;
 import cn.tjgzy.myrpc.transport.netty.client.NettyClient;
 import cn.tjgzy.myrpc.transport.RpcClientProxy;
 
@@ -25,6 +23,13 @@ public class NettyTestClient {
         System.out.println(res);
 
         int number = testService.getNumber(12);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            System.out.println("sleep了.......");
+            e.printStackTrace();
+        }
+        int number2 = testService.getNumber(12);
 
         System.out.println(number);
     }

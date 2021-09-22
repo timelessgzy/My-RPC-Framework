@@ -60,7 +60,8 @@ public class RpcClientProxy implements InvocationHandler {
          */
         RpcRequest rpcRequest = new RpcRequest(UUID.randomUUID().toString(),
                                                 method.getDeclaringClass().getName(),
-                                                method.getName(), args, method.getParameterTypes());
+                                                method.getName(), args, method.getParameterTypes(),
+                                        false);
         RpcResponse rpcResponse = null;
         CompletableFuture<RpcResponse> completableFuture = (CompletableFuture<RpcResponse>)client.sendRequest(rpcRequest);
         rpcResponse = completableFuture.get();

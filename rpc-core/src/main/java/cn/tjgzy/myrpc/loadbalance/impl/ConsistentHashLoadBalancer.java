@@ -1,6 +1,7 @@
-package cn.tjgzy.myrpc.loadbalance;
+package cn.tjgzy.myrpc.loadbalance.impl;
 
 import cn.tjgzy.myrpc.entity.RpcRequest;
+import cn.tjgzy.myrpc.loadbalance.AbstractLoadBalance;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.common.utils.MD5Utils;
 

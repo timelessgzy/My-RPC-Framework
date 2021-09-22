@@ -1,13 +1,21 @@
 package cn.tjgzy.myrpc.transport.netty.client;
 
+import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.entity.RpcResponse;
 import cn.tjgzy.myrpc.factory.SingletonFactory;
+import cn.tjgzy.myrpc.serializer.CommonSerializer;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.InetSocketAddress;
 
 /**
  * @author GongZheyi
@@ -40,4 +48,20 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<RpcResponse>
         ctx.close();
     }
 
+    //读写超时并且添加IdleStateHandler时，会触发这个方法
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            IdleState state = ((IdleStateEvent) evt).state();
+            if (state == IdleState.WRITER_IDLE) {
+                logger.info("发送心跳包 [{}]", ctx.channel().remoteAddress());
+                Channel channel = ChannelProvider.get((InetSocketAddress) ctx.channel().remoteAddress());
+                RpcRequest rpcRequest = new RpcRequest();
+                rpcRequest.setHeartBeat(true);
+                channel.writeAndFlush(rpcRequest).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
+            }
+        } else {
+            super.userEventTriggered(ctx, evt);
+        }
+    }
 }
