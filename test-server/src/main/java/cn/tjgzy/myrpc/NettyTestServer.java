@@ -12,7 +12,7 @@ import cn.tjgzy.myrpc.transport.netty.server.NettyServer;
 @ServiceScan
 public class NettyTestServer {
     public static void main(String[] args) {
-        NettyServer nettyServer = new NettyServer("127.0.0.1",7777);
+        NettyServer nettyServer = new NettyServer("127.0.0.1",8888);
         nettyServer.start();
     }
 }

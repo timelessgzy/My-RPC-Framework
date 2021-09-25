@@ -35,7 +35,7 @@ public class NacosServiceDiscovery implements ServiceDiscovery {
 
     @Override
     public InetSocketAddress lookupService(RpcRequest rpcRequest) {
-        String serviceName = rpcRequest.getInterfaceName();
+        String serviceName = rpcRequest.getRpcServiceName();
         try {
             List<Instance> instances = NacosUtils.getAllInstance(serviceName);
             // 负载均衡策略

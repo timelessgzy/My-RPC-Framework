@@ -36,7 +36,7 @@ public class ConsistentHashLoadBalancer extends AbstractLoadBalance {
         System.out.println(Arrays.toString(serviceAddresses.toArray()));
 
         int identityHashCode = System.identityHashCode(serviceAddresses);
-        String rpcServiceName = rpcRequest.getInterfaceName();
+        String rpcServiceName = rpcRequest.getRpcServiceName();
         ConsistentHashSelector selector = selectors.get(rpcServiceName);
         // check for updates
         if (selector == null || selector.identityHashCode != identityHashCode) {

@@ -34,8 +34,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
             return;
         }
 
-        String interfaceName = msg.getInterfaceName();
-        Object service = serviceProvider.getService(interfaceName);
+        String serviceName = msg.getRpcServiceName();
+        Object service = serviceProvider.getService(serviceName);
         Object result = requestHandler.handle(msg, service);
         // 构造Response报文
         RpcResponse<Object> rpcResponse = RpcResponse.success(result,msg.getRequestId());

@@ -52,7 +52,9 @@ public abstract class AbstractRpcServer implements RpcServer {
         Set<Class<?>> classSet = ReflectUtil.getClasses(basePackage);
         for(Class<?> clazz : classSet) {
             if(clazz.isAnnotationPresent(RpcService.class)) {
+                // 获取注释的serviceName和group
                 String serviceName = clazz.getAnnotation(RpcService.class).name();
+                String group = clazz.getAnnotation(RpcService.class).group();
                 Object obj;
                 try {
                     obj = clazz.newInstance();
@@ -62,11 +64,14 @@ public abstract class AbstractRpcServer implements RpcServer {
                 }
                 // 如果没有设置服务别名，默认为空，则获取接口名称进行发布
                 if("".equals(serviceName)) {
+                    System.out.println("没有设置别名");
                     Class<?>[] interfaces = clazz.getInterfaces();
                     for (Class<?> oneInterface: interfaces){
-                        publishService(obj, oneInterface.getCanonicalName());
+                        System.out.println("注册接口，名称为" + oneInterface.getCanonicalName() + group);
+                        publishService(obj, oneInterface.getCanonicalName() + group);
                     }
                 } else {
+                    System.out.println("设置了别名");
                     publishService(obj, serviceName);
                 }
             }

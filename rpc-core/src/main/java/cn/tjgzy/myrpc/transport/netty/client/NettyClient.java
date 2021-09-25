@@ -111,4 +111,8 @@ public class NettyClient implements RpcClient {
         }
         return resultFuture;
     }
+
+    public void scanReferenceServices() {
+
+    }
 }

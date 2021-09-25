@@ -40,8 +40,8 @@ public class ServiceProviderImpl implements ServiceProvider {
     }
 
     @Override
-    public Object getService(String interfaceName) {
-        Object service = serviceMap.get(interfaceName);
+    public Object getService(String serviceName) {
+        Object service = serviceMap.get(serviceName);
         if (service == null) {
             throw new RpcException(RpcError.SERVICE_NOT_FOUND);
         }

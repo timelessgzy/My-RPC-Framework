@@ -1,4 +1,4 @@
-package cn.tjgzy.myrpc.hook;
+package cn.tjgzy.myrpc.config;
 
 import cn.tjgzy.myrpc.utils.NacosUtils;
 import cn.tjgzy.myrpc.utils.ThreadPoolFactoryUtils;

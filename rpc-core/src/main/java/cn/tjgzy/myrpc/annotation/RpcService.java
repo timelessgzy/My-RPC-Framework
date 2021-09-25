@@ -15,4 +15,9 @@ public @interface RpcService {
 
     public String name() default "";
 
+    /**
+     * Service group, default value is empty string
+     */
+    String group() default "";
+
 }

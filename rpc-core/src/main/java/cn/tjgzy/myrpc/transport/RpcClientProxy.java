@@ -1,5 +1,6 @@
 package cn.tjgzy.myrpc.transport;
 
+import cn.tjgzy.myrpc.config.RpcServiceConfig;
 import cn.tjgzy.myrpc.constant.ResponseCode;
 import cn.tjgzy.myrpc.constant.RpcError;
 import cn.tjgzy.myrpc.entity.RpcRequest;
@@ -33,8 +34,16 @@ public class RpcClientProxy implements InvocationHandler {
     private static final Logger logger = LoggerFactory.getLogger(RpcClientProxy.class);
     private final RpcClient client; // 客户端
 
+    private final RpcServiceConfig rpcServiceConfig;
+
     public RpcClientProxy(RpcClient client) {
         this.client = client;
+        this.rpcServiceConfig = new RpcServiceConfig();
+    }
+
+    public RpcClientProxy(RpcClient client, RpcServiceConfig rpcServiceConfig) {
+        this.client = client;
+        this.rpcServiceConfig = rpcServiceConfig;
     }
 
 
@@ -58,10 +67,18 @@ public class RpcClientProxy implements InvocationHandler {
         /**
          * 通过CompletableFuture获取结果
          */
-        RpcRequest rpcRequest = new RpcRequest(UUID.randomUUID().toString(),
-                                                method.getDeclaringClass().getName(),
-                                                method.getName(), args, method.getParameterTypes(),
-                                        false);
+//        RpcRequest rpcRequest = new RpcRequest(UUID.randomUUID().toString(),
+//                                                method.getDeclaringClass().getName(),
+//                                                method.getName(), args, method.getParameterTypes(),
+//                                        false,rpcServiceConfig.getGroup());
+        RpcRequest rpcRequest = RpcRequest.builder().methodName(method.getName())
+                .parameters(args)
+                .interfaceName(method.getDeclaringClass().getName())
+                .paramTypes(method.getParameterTypes())
+                .requestId(UUID.randomUUID().toString())
+                .group(rpcServiceConfig.getGroup())
+                .heartBeat(false)
+                .build();
         RpcResponse rpcResponse = null;
         CompletableFuture<RpcResponse> completableFuture = (CompletableFuture<RpcResponse>)client.sendRequest(rpcRequest);
         rpcResponse = completableFuture.get();
@@ -80,8 +97,8 @@ public class RpcClientProxy implements InvocationHandler {
             throw new RpcException(RpcError.RESPONSE_NOT_MATCH);
         }
         if (rpcResponse.getStatusCode() == null || !rpcResponse.getStatusCode().equals(ResponseCode.SUCCESS.getCode())) {
-            logger.error("调用服务失败,serviceName:{},RpcResponse:{}", rpcRequest.getInterfaceName(), rpcResponse);
-            throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, "INTERFACE_NAME:"  + rpcRequest.getInterfaceName());
+            logger.error("调用服务失败,serviceName:{},RpcResponse:{}", rpcRequest.getRpcServiceName(), rpcResponse);
+            throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE, "RpcServiceName:"  + rpcRequest.getRpcServiceName());
         }
     }
 

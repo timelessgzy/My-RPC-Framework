@@ -44,4 +44,13 @@ public class RpcRequest implements Serializable {
      */
     private Boolean heartBeat;
 
+    /**
+     * 服务所属的group，用于区分同一接口的多个实现类
+     */
+    private String group;
+
+    public String getRpcServiceName() {
+        return this.getInterfaceName() + this.getGroup();
+    }
+
 }
