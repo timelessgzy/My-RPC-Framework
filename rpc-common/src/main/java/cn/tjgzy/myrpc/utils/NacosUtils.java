@@ -22,10 +22,16 @@ import java.util.Set;
 public class NacosUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(NacosUtils.class);
+    /**
+     * 与 Nacos的连接
+     */
+    private static final NamingService namingService;
+    /**
+     * 服务名称集合
+     */
+    private static final Set<String> serviceNames = new HashSet<>();
 
-    private static final NamingService namingService;   // 连接
-    private static final Set<String> serviceNames = new HashSet<>();    // 已注册的服务名称
-    private static InetSocketAddress address;   // 连接信息
+    private static InetSocketAddress address;
 
     private static final String NACOS_ADDR = "127.0.0.1:8848";
 

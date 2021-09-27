@@ -90,6 +90,7 @@ public class NettyClient implements RpcClient {
 
             // 将rpcRequest的ID和结果凭证resultFuture保存起来
             unprocessedRequests.put(rpcRequest.getRequestId(), resultFuture);
+
             channel.writeAndFlush(rpcRequest).addListener((ChannelFutureListener) future1 -> {
                 if (future1.isSuccess()) {
                     logger.info(String.format("客户端发送消息: %s", rpcRequest.toString()));
@@ -112,7 +113,4 @@ public class NettyClient implements RpcClient {
         return resultFuture;
     }
 
-    public void scanReferenceServices() {
-
-    }
 }

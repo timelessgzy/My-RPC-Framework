@@ -11,6 +11,6 @@ import cn.tjgzy.myrpc.annotation.RpcService;
 public class TestServiceImpl implements TestService {
     @Override
     public int getNumber(int i) {
-        return i * 2;
+        return i / 0;
     }
 }

@@ -1,8 +1,10 @@
 package cn.tjgzy.myrpc.transport;
 
 import cn.tjgzy.myrpc.constant.ResponseCode;
+import cn.tjgzy.myrpc.constant.RpcError;
 import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.entity.RpcResponse;
+import cn.tjgzy.myrpc.exception.RpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,14 +19,17 @@ public class RequestHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    public Object handle(RpcRequest rpcRequest, Object service) {
+    public Object handle(RpcRequest rpcRequest, Object service) throws InvocationTargetException, IllegalAccessException {
         Object result = null;
-        try {
-            result = invokeTargetMethod(rpcRequest, service);
-            logger.info("服务:{} 成功调用方法:{}", rpcRequest.getRpcServiceName(), rpcRequest.getMethodName());
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            logger.error("调用或发送时有错误发生：", e);
-        }
+        result = invokeTargetMethod(rpcRequest, service);
+        logger.info("服务:{} 成功调用方法:{}", rpcRequest.getRpcServiceName(), rpcRequest.getMethodName());
+//        try {
+//            result = invokeTargetMethod(rpcRequest, service);
+//            logger.info("服务:{} 成功调用方法:{}", rpcRequest.getRpcServiceName(), rpcRequest.getMethodName());
+//        } catch (IllegalAccessException | InvocationTargetException e) {
+//            logger.error("调用或发送时有错误发生：", e);
+//            throw new RpcException(RpcError.SERVICE_INVOCATION_FAILURE);
+//        }
         return result;
     }
 
@@ -36,7 +41,10 @@ public class RequestHandler {
         } catch (NoSuchMethodException e) {
             return RpcResponse.fail(ResponseCode.METHOD_NOT_FOUND, rpcRequest.getRequestId());
         }
-        return method.invoke(service, rpcRequest.getParameters());
+        System.out.println("开始调用");
+        Object result = method.invoke(service, rpcRequest.getParameters());
+        System.out.println("调用结果为：" + result);
+        return result;
     }
 
 }

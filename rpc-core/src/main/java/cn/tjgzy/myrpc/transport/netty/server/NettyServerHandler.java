@@ -1,5 +1,7 @@
 package cn.tjgzy.myrpc.transport.netty.server;
 
+import cn.tjgzy.myrpc.constant.ResponseCode;
+import cn.tjgzy.myrpc.constant.RpcError;
 import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.entity.RpcResponse;
 import cn.tjgzy.myrpc.provider.ServiceProviderImpl;
@@ -8,9 +10,12 @@ import cn.tjgzy.myrpc.transport.RequestHandler;
 import io.netty.channel.*;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.InvocationTargetException;
 
 /** 入站处理器，收到RpcRequest报文，发送RpcResponse报文
  * @author GongZheyi
@@ -28,7 +33,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, RpcRequest msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, RpcRequest msg) {
         if (msg.getHeartBeat()) {
             logger.info("接收到客户端发来的心跳包");
             return;
@@ -36,9 +41,19 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
 
         String serviceName = msg.getRpcServiceName();
         Object service = serviceProvider.getService(serviceName);
-        Object result = requestHandler.handle(msg, service);
-        // 构造Response报文
-        RpcResponse<Object> rpcResponse = RpcResponse.success(result,msg.getRequestId());
+        // 放大调用
+        Object result = null;
+        RpcResponse<Object> rpcResponse = null;
+        try {
+            result = requestHandler.handle(msg, service);
+            // 构造Response报文
+            rpcResponse = RpcResponse.success(result,msg.getRequestId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            // TODO:发送一条错误报文
+            rpcResponse = RpcResponse.fail(ResponseCode.FAIL, msg.getRequestId(),
+                    "服务调用中有错误发生，请检查服务端端口");
+        }
         if (ctx.channel().isActive() && ctx.channel().isWritable()) {
             ctx.writeAndFlush(rpcResponse);
         } else {
@@ -46,7 +61,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
         }
 //        ChannelFuture future = ctx.writeAndFlush(rpcResponse);
 //        future.addListener(ChannelFutureListener.CLOSE);
-
+//        ctx.writeAndFlush(rpcMessage).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
         ReferenceCountUtil.release(msg);
     }
 
