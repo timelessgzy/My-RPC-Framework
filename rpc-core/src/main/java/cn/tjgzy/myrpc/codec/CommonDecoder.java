@@ -1,10 +1,15 @@
 package cn.tjgzy.myrpc.codec;
 
+import cn.tjgzy.myrpc.compress.Compress;
+import cn.tjgzy.myrpc.compress.DefaultCompress;
+import cn.tjgzy.myrpc.compress.GzipCompress;
+import cn.tjgzy.myrpc.compress.factory.CompressFactory;
 import cn.tjgzy.myrpc.constant.PackageType;
 import cn.tjgzy.myrpc.constant.RpcError;
 import cn.tjgzy.myrpc.entity.RpcRequest;
 import cn.tjgzy.myrpc.entity.RpcResponse;
 import cn.tjgzy.myrpc.exception.RpcException;
+import cn.tjgzy.myrpc.factory.SingletonFactory;
 import cn.tjgzy.myrpc.serializer.CommonSerializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -30,6 +35,8 @@ public class CommonDecoder extends ByteToMessageDecoder {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonDecoder.class);
     private static final int MAGIC_NUMBER = 0xCAFEBABE;
+    private final Compress compress = CompressFactory.getCompressInstance(1);
+
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
@@ -61,6 +68,7 @@ public class CommonDecoder extends ByteToMessageDecoder {
         int dataLength = in.readInt();
         byte[] bytes = new byte[dataLength];
         in.readBytes(bytes);
+        bytes = compress.decompress(bytes);
         Object o = serializer.deserialize(bytes, packageClass);
         out.add(o);
     }

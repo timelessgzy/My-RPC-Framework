@@ -1,7 +1,12 @@
 package cn.tjgzy.myrpc.codec;
 
+import cn.tjgzy.myrpc.compress.Compress;
+import cn.tjgzy.myrpc.compress.DefaultCompress;
+import cn.tjgzy.myrpc.compress.GzipCompress;
+import cn.tjgzy.myrpc.compress.factory.CompressFactory;
 import cn.tjgzy.myrpc.constant.PackageType;
 import cn.tjgzy.myrpc.entity.RpcRequest;
+import cn.tjgzy.myrpc.factory.SingletonFactory;
 import cn.tjgzy.myrpc.serializer.CommonSerializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,6 +27,7 @@ public class CommonEncoder extends MessageToByteEncoder {
 
     private static final int MAGIC_NUMBER = 0xCAFEBABE;
     private final CommonSerializer serializer;
+    private final Compress compress = CompressFactory.getCompressInstance(1);
 
     public CommonEncoder(CommonSerializer serializer) {
         this.serializer = serializer;
@@ -37,6 +43,7 @@ public class CommonEncoder extends MessageToByteEncoder {
         }
         out.writeInt(serializer.getCode());
         byte[] bytes = serializer.serialize(msg);
+        bytes = compress.compress(bytes);
         out.writeInt(bytes.length);
         out.writeBytes(bytes);
     }
