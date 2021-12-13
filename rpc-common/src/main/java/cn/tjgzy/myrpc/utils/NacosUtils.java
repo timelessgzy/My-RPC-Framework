@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/** 管理Nacos连接的工具类
+/** 管理Nacos的工具类
  * @author GongZheyi
  * @create 2021-09-18-10:20
  */

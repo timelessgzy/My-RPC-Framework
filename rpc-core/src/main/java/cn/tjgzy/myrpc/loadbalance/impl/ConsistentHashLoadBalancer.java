@@ -58,6 +58,9 @@ public class ConsistentHashLoadBalancer extends AbstractLoadBalance {
          */
         private final TreeMap<Long, String> virtualInvokers;
 
+        /**
+         * 每个真实节点对应的虚拟节点个数
+         */
         private final int identityHashCode;
 
         /**

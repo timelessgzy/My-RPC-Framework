@@ -22,7 +22,8 @@ public class JsonSerializer implements CommonSerializer {
     @Override
     public byte[] serialize(Object obj) {
         try {
-            return objectMapper.writeValueAsBytes(obj);
+            byte[] bytes = objectMapper.writeValueAsBytes(obj);
+            return bytes;
         } catch (JsonProcessingException e) {
             logger.error("序列化时有错误发生: {}", e.getMessage());
             e.printStackTrace();
@@ -45,12 +46,20 @@ public class JsonSerializer implements CommonSerializer {
         }
     }
 
-    /*
-    这里由于使用JSON序列化和反序列化Object数组，无法保证反序列化后仍然为原实例类型
-    需要重新判断处理
- */
+
+    /**
+     * 这里由于使用JSON序列化和反序列化Object数组，无法保证反序列化后仍然为原实例类型
+     * 需要重新判断处理
+     * @param obj
+     * @return
+     * @throws IOException
+     */
     private Object handleRequest(Object obj) throws IOException {
         RpcRequest rpcRequest = (RpcRequest) obj;
+        if (rpcRequest.getHeartBeat()) {
+            // 如果是心跳包，则属性全部为空，不需要再进行序列化
+            return obj;
+        }
         for(int i = 0; i < rpcRequest.getParamTypes().length; i ++) {
             Class<?> clazz = rpcRequest.getParamTypes()[i];
             if(!clazz.isAssignableFrom(rpcRequest.getParameters()[i].getClass())) {

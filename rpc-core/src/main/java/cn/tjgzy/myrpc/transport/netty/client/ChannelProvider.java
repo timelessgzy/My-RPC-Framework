@@ -2,7 +2,9 @@ package cn.tjgzy.myrpc.transport.netty.client;
 
 import cn.tjgzy.myrpc.codec.CommonDecoder;
 import cn.tjgzy.myrpc.codec.CommonEncoder;
+import cn.tjgzy.myrpc.serializer.JsonSerializer;
 import cn.tjgzy.myrpc.serializer.KryoSerializer;
+import cn.tjgzy.myrpc.serializer.ProtostuffSerializer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -79,7 +81,7 @@ public class ChannelProvider {
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(new CommonDecoder());
                 ch.pipeline().addLast(new IdleStateHandler(0, 4, 0, TimeUnit.SECONDS));
-                ch.pipeline().addLast(new CommonEncoder(new KryoSerializer()));
+                ch.pipeline().addLast(new CommonEncoder(new ProtostuffSerializer()));
                 ch.pipeline().addLast(new NettyClientHandler());
             }
         });
@@ -96,7 +98,8 @@ public class ChannelProvider {
         return channel;
     }
 
-    private static Channel connect(Bootstrap bootstrap, InetSocketAddress inetSocketAddress) throws InterruptedException, ExecutionException {
+    private static Channel connect(Bootstrap bootstrap, InetSocketAddress inetSocketAddress)
+            throws InterruptedException, ExecutionException {
 //        ChannelFuture future = bootstrap.connect(inetSocketAddress).sync();
 //        return future.channel();
         CompletableFuture<Channel> completableFuture = new CompletableFuture<>();

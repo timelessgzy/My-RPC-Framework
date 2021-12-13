@@ -42,6 +42,7 @@ public class CommonEncoder extends MessageToByteEncoder {
             out.writeInt(PackageType.RESPONSE_PACK.getCode());
         }
         out.writeInt(serializer.getCode());
+        // 序列化
         byte[] bytes = serializer.serialize(msg);
         bytes = compress.compress(bytes);
         out.writeInt(bytes.length);

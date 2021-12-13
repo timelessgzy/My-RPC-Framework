@@ -15,14 +15,14 @@ public class NettyTestClient {
         // 新建一个Netty客户端
         NettyClient nettyClient = new NettyClient(new RoundRobinLoadBalancer());
         // 新建一个代理类处理器，代理实现类的逻辑在这里
-        RpcClientProxy rpcClientProxy = new RpcClientProxy(nettyClient,
-                new RpcServiceConfig("Group1", HelloService.class));
-
-        // 获取代理实现类
-        HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
-        HelloObject object = new HelloObject(11, "This is a netty message");
-        String res = helloService.hello(object);
-        System.out.println(res);
+//        RpcClientProxy rpcClientProxy = new RpcClientProxy(nettyClient,
+//                new RpcServiceConfig("Group1", HelloService.class));
+//
+//        // 获取代理实现类
+//        HelloService helloService = rpcClientProxy.getProxy(HelloService.class);
+//        HelloObject object = new HelloObject(11, "This is a netty message");
+//        String res = helloService.hello(object);
+//        System.out.println(res);
 
 
 
@@ -34,6 +34,9 @@ public class NettyTestClient {
         TestService testService = rpcClientProxy2.getProxy(TestService.class);
 
         int number = testService.getNumber(12);
+
+
+
 //        try {
 //            Thread.sleep(2000);
 //        } catch (InterruptedException e) {

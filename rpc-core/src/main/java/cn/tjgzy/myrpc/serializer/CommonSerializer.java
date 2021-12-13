@@ -19,8 +19,8 @@ public interface CommonSerializer {
                 return new KryoSerializer();
             case 1:
                 return new JsonSerializer();
-//            case 2:
-//                return new HessianSerializer();
+            case 2:
+                return new ProtostuffSerializer();
 //            case 3:
 //                return new ProtobufSerializer();
             default:
@@ -28,10 +28,24 @@ public interface CommonSerializer {
         }
     }
 
-
+    /**
+     * 传入对象进行序列化
+     * @param obj
+     * @return
+     */
     byte[] serialize(Object obj);
 
+    /**
+     * 将字节反序列化为指定的类对象
+     * @param bytes
+     * @param clazz
+     * @return
+     */
     Object deserialize(byte[] bytes, Class<?> clazz);
 
+    /**
+     * 返回序列化方式
+     * @return
+     */
     int getCode();
 }

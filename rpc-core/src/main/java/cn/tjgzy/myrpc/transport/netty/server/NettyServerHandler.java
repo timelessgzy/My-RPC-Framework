@@ -34,6 +34,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcRequest msg) {
+        System.out.println("NettyServerHandler" + msg.toString());
         if (msg.getHeartBeat()) {
             logger.info("接收到客户端发来的心跳包");
             return;
@@ -41,7 +42,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
 
         String serviceName = msg.getRpcServiceName();
         Object service = serviceProvider.getService(serviceName);
-        // 放大调用
+        // 反射调用
         Object result = null;
         RpcResponse<Object> rpcResponse = null;
         try {

@@ -6,7 +6,6 @@ import cn.tjgzy.myrpc.compress.GzipCompress;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author GongZheyi

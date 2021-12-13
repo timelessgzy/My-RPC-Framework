@@ -5,7 +5,9 @@ import cn.tjgzy.myrpc.codec.CommonEncoder;
 import cn.tjgzy.myrpc.config.ShutdownHook;
 import cn.tjgzy.myrpc.provider.ServiceProviderImpl;
 import cn.tjgzy.myrpc.registry.NacosServiceRegistry;
+import cn.tjgzy.myrpc.serializer.JsonSerializer;
 import cn.tjgzy.myrpc.serializer.KryoSerializer;
+import cn.tjgzy.myrpc.serializer.ProtostuffSerializer;
 import cn.tjgzy.myrpc.transport.AbstractRpcServer;
 import cn.tjgzy.myrpc.utils.ThreadPoolFactoryUtils;
 import io.netty.bootstrap.ServerBootstrap;
@@ -53,7 +55,7 @@ public class NettyServer extends AbstractRpcServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new IdleStateHandler(5, 0, 0, TimeUnit.SECONDS));
                             ch.pipeline().addLast(new CommonDecoder());
-                            ch.pipeline().addLast(new CommonEncoder(new KryoSerializer()));
+                            ch.pipeline().addLast(new CommonEncoder(new ProtostuffSerializer()));
                             ch.pipeline().addLast(serviceHandlerGroup, new NettyServerHandler());
                         }
                     });

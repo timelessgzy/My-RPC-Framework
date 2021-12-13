@@ -69,6 +69,7 @@ public class CommonDecoder extends ByteToMessageDecoder {
         byte[] bytes = new byte[dataLength];
         in.readBytes(bytes);
         bytes = compress.decompress(bytes);
+        // 反序列化
         Object o = serializer.deserialize(bytes, packageClass);
         out.add(o);
     }

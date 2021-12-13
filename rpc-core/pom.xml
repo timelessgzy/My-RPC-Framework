@@ -13,6 +13,17 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-core</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.protostuff</groupId>
+            <artifactId>protostuff-runtime</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.example</groupId>
             <artifactId>rpc-common</artifactId>
             <version>${project.version}</version>

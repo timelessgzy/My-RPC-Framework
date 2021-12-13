@@ -1,5 +1,7 @@
 package cn.tjgzy.myrpc.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.io.Serializable;
@@ -13,6 +15,8 @@ import java.io.Serializable;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
+//@JsonIgnoreProperties(ignoreUnknown = true)
 public class RpcRequest implements Serializable {
     /**
      * 请求号
@@ -49,6 +53,12 @@ public class RpcRequest implements Serializable {
      */
     private String group;
 
+    private String rpcServiceName;
+
+    /**
+     * 获取服务名称：接口名 + 组名
+     * @return
+     */
     public String getRpcServiceName() {
         return this.getInterfaceName() + this.getGroup();
     }

@@ -33,7 +33,8 @@ public class RequestHandler {
         return result;
     }
 
-    private Object invokeTargetMethod(RpcRequest rpcRequest, Object service) throws IllegalAccessException, InvocationTargetException {
+    private Object invokeTargetMethod(RpcRequest rpcRequest, Object service)
+            throws IllegalAccessException, InvocationTargetException {
         Method method;
         try {
             System.out.println(service);
